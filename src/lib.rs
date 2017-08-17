@@ -115,7 +115,7 @@ pub struct Textures<'t> {
 impl<'t> Textures<'t> {
     pub fn new<T>(loader: &'t TextureCreator<T>) -> Self {
         Self {
-            player: loader.load_texture("assets/sprites/player.png").unwrap(),
+            player: loader.load_texture("assets/textures/player.png").unwrap(),
         }
     }
 }
