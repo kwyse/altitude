@@ -4,6 +4,9 @@ use sdl2::video::Window;
 use delegator::Delegator;
 use graphics::Renderable;
 
+/// A game object.
+///
+/// Composed of a controlling component and a rendering component.
 pub struct Entity<'e, D: 'e, R: 'e> {
     delegator: &'e mut D,
     renderable: &'e mut R,

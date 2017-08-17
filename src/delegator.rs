@@ -4,12 +4,16 @@ use sdl2::keyboard::{Keycode, Scancode};
 
 use entities::Velocity;
 
+/// Controls an entity, such as through user input or through AI.
 pub trait Delegator {
+    /// The object that the delegator controls.
     type Delegate;
 
+    /// Actions that will be taken to control the delegate.
     fn delegate(&mut self, delegate: &mut Self::Delegate);
 }
 
+/// Captures input to control the player entity.
 pub struct UserInput<'ui> {
     events: &'ui mut EventPump
 }

@@ -1,6 +1,7 @@
 use sdl2::image::LoadTexture;
 use sdl2::render::{TextureCreator, Texture};
 
+/// Holds resources held on disk.
 pub struct Resources<'r> {
     pub textures: Textures<'r>,
 }
@@ -13,6 +14,7 @@ impl<'r> Resources<'r> {
     }
 }
 
+/// Holds textures held on disk.
 pub struct Textures<'t> {
     pub player: Texture<'t>,
 }
