@@ -9,21 +9,18 @@ use graphics::Renderable;
 /// Composed of a controlling component and a rendering component.
 pub struct Entity<'e, D: 'e, R: 'e> {
     delegator: &'e mut D,
-
-    // TODO: This should be owned so NPCs can have individual sprites
-    renderable: &'e mut R,
-
+    renderable: Box<R>,
     velocity: Velocity,
-    position: Position
+    position: Position,
 }
 
 impl<'e, D, R> Entity<'e, D, R>
     where D: Delegator<Delegate = Velocity>, R: Renderable<Target = Canvas<Window>>
 {
-    pub fn new(delegator: &'e mut D, renderable: &'e mut R) -> Self {
+    pub fn new(delegator: &'e mut D, renderable: R) -> Self {
         Self {
             delegator: delegator,
-            renderable: renderable,
+            renderable: Box::new(renderable),
             velocity: Velocity { x: 0.0, y: 0.0 },
             position: Position { x: 0.0, y: 0.0 },
         }

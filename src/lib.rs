@@ -23,9 +23,9 @@ pub fn run() {
     let resources = Resources::new(texture_creator);
 
     let mut player_input = PlayerInput::new(&mut events);
-    let mut sprite = Sprite::new(&resources.textures.player, Size { width: 32, height: 32 });
+    let player_sprite = Sprite::new(&resources.textures.player, Size { width: 32, height: 32 });
 
-    let mut entity = Entity::new(&mut player_input, &mut sprite);
+    let mut player = Entity::new(&mut player_input, player_sprite);
 
     let frame_duration = Duration::from_millis(1_000 / 60);
     let mut previous = Instant::now();
@@ -37,14 +37,14 @@ pub fn run() {
         previous = current;
         lag += elapsed;
 
-        entity.delegate();
+        player.delegate();
 
         while lag > frame_duration {
             lag -= frame_duration;
         }
 
         canvas.clear();
-        entity.render(&mut canvas);
+        player.render(&mut canvas);
         canvas.present();
     }
 }
