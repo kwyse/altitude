@@ -7,7 +7,7 @@ pub mod entities;
 pub mod graphics;
 pub mod resources;
 
-use delegator::UserInput;
+use delegator::PlayerInput;
 use entities::{Entity, Size};
 use graphics::Sprite;
 use resources::Resources;
@@ -22,10 +22,10 @@ pub fn run() {
     let texture_creator = &canvas.texture_creator();
     let resources = Resources::new(texture_creator);
 
-    let mut input = UserInput::new(&mut events);
+    let mut player_input = PlayerInput::new(&mut events);
     let mut sprite = Sprite::new(&resources.textures.player, Size { width: 32, height: 32 });
 
-    let mut entity = Entity::new(&mut input, &mut sprite);
+    let mut entity = Entity::new(&mut player_input, &mut sprite);
 
     let frame_duration = Duration::from_millis(1_000 / 60);
     let mut previous = Instant::now();

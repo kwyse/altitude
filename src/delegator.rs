@@ -14,19 +14,19 @@ pub trait Delegator {
 }
 
 /// Captures input to control the player entity.
-pub struct UserInput<'ui> {
-    events: &'ui mut EventPump
+pub struct PlayerInput<'pi> {
+    events: &'pi mut EventPump
 }
 
-impl<'ui> UserInput<'ui> {
-    pub fn new(events: &'ui mut EventPump) -> Self {
+impl<'pi> PlayerInput<'pi> {
+    pub fn new(events: &'pi mut EventPump) -> Self {
         Self {
             events: events,
         }
     }
 }
 
-impl<'ui> Delegator for UserInput<'ui> {
+impl<'pi> Delegator for PlayerInput<'pi> {
     type Delegate = Velocity;
 
     fn delegate(&mut self, delegate: &mut Velocity) {
