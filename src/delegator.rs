@@ -1,6 +1,6 @@
-use sdl2::EventPump;
 use sdl2::event::Event;
-use sdl2::keyboard::{Keycode, Scancode};
+use sdl2::keyboard::{KeyboardState, Keycode, Scancode};
+use std::marker::PhantomData;
 
 use entities::Velocity;
 
@@ -16,32 +16,32 @@ pub trait Delegator {
 }
 
 /// Captures input to control the player entity.
-pub struct PlayerInput<'pi> {
-    events: &'pi mut EventPump
+pub struct PlayerInput<T> {
+    _marker: PhantomData<T>
 }
 
-impl<'pi> PlayerInput<'pi> {
-    pub fn new(events: &'pi mut EventPump) -> Self {
+impl<T> PlayerInput<T> {
+    pub fn new() -> Self {
         Self {
-            events: events,
+            _marker: PhantomData,
         }
     }
 }
 
-impl<'pi> Delegator for PlayerInput<'pi> {
+impl<'ui> Delegator for PlayerInput<UserInput<'ui>> {
     type Delegate = Velocity;
-    type Delegator = UserInput;
+    type Delegator = UserInput<'ui>;
 
-    fn delegate(&mut self, _delegator: &Self::Delegator, delegate: &mut Self::Delegate) {
-        for event in self.events.poll_iter() {
-            if let Event::KeyDown { keycode: Some(Keycode::Escape), .. } = event {
+    fn delegate(&mut self, delegator: &Self::Delegator, delegate: &mut Self::Delegate) {
+        for event in delegator.events.iter() {
+            if let &Event::KeyDown { keycode: Some(Keycode::Escape), .. } = event {
                 println!("Escape!");
                 panic!("Please abort me");
             }
         }
 
-        let state = self.events.keyboard_state();
-        if state.is_scancode_pressed(Scancode::D) {
+        let state = &delegator.keyboard;
+        if state.is_scancode_pressed(Scancode::S) {
             println!("Going down!");
             delegate.x = 0.0;
             delegate.y = 1.0;
@@ -49,4 +49,16 @@ impl<'pi> Delegator for PlayerInput<'pi> {
     }
 }
 
-pub struct UserInput;
+pub struct UserInput<'ui> {
+    events: Vec<Event>,
+    keyboard: KeyboardState<'ui>,
+}
+
+impl<'ui> UserInput<'ui> {
+    pub fn new(keyboard_state: KeyboardState<'ui>) -> Self {
+        Self {
+            events: Vec::new(),
+            keyboard: keyboard_state,
+        }
+    }
+}

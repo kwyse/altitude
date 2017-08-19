@@ -14,7 +14,6 @@ use resources::Resources;
 
 pub fn run() {
     let sdl_context = sdl2::init().unwrap();
-    let mut events = sdl_context.event_pump().unwrap();
     let video = sdl_context.video().unwrap();
     let window = video.window("Altitude", 640, 480).position_centered().opengl().build().unwrap();
     let mut canvas = window.into_canvas().build().unwrap();
@@ -22,7 +21,8 @@ pub fn run() {
     let texture_creator = &canvas.texture_creator();
     let resources = Resources::new(texture_creator);
 
-    let mut player_input = PlayerInput::new(&mut events);
+    let event_pump = sdl_context.event_pump().unwrap();
+    let mut player_input = PlayerInput::new();
     let player_sprite = Sprite::new(&resources.textures.player, Size { width: 32, height: 32 });
 
     let mut player = Entity::new(&mut player_input, player_sprite);
@@ -31,7 +31,6 @@ pub fn run() {
     let mut previous = Instant::now();
     let mut lag = Duration::new(0, 0);
 
-    let user_input = UserInput;
 
     'running: loop {
         let current = Instant::now();
@@ -39,6 +38,8 @@ pub fn run() {
         previous = current;
         lag += elapsed;
 
+        let keyboard = event_pump.keyboard_state();
+        let user_input = UserInput::new(keyboard);
         player.delegate(&user_input);
 
         while lag > frame_duration {
