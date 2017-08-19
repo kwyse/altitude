@@ -9,7 +9,10 @@ use graphics::Renderable;
 /// Composed of a controlling component and a rendering component.
 pub struct Entity<'e, D: 'e, R: 'e> {
     delegator: &'e mut D,
+
+    // TODO: This should be owned so NPCs can have individual sprites
     renderable: &'e mut R,
+
     velocity: Velocity,
     position: Position
 }
