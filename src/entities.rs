@@ -15,7 +15,8 @@ pub struct Entity<'e, D: 'e, R: 'e> {
 }
 
 impl<'e, D, R> Entity<'e, D, R>
-    where D: Delegator<Delegate = Velocity>, R: Renderable<Target = Canvas<Window>>
+where D: Delegator<Delegate = Velocity>,
+      R: Renderable<Target = Canvas<Window>>,
 {
     pub fn new(delegator: &'e mut D, renderable: R) -> Self {
         Self {
@@ -26,8 +27,8 @@ impl<'e, D, R> Entity<'e, D, R>
         }
     }
 
-    pub fn delegate(&mut self) {
-        self.delegator.delegate(&mut self.velocity);
+    pub fn delegate(&mut self, delegator: &D::Delegator) {
+        self.delegator.delegate(delegator, &mut self.velocity);
     }
 
     pub fn render(&mut self, canvas: &mut Canvas<Window>) {

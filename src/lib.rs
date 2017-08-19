@@ -7,7 +7,7 @@ pub mod entities;
 pub mod graphics;
 pub mod resources;
 
-use delegator::PlayerInput;
+use delegator::{PlayerInput, UserInput};
 use entities::{Entity, Size};
 use graphics::Sprite;
 use resources::Resources;
@@ -31,13 +31,15 @@ pub fn run() {
     let mut previous = Instant::now();
     let mut lag = Duration::new(0, 0);
 
+    let user_input = UserInput;
+
     'running: loop {
         let current = Instant::now();
         let elapsed = current - previous;
         previous = current;
         lag += elapsed;
 
-        player.delegate();
+        player.delegate(&user_input);
 
         while lag > frame_duration {
             lag -= frame_duration;

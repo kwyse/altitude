@@ -8,9 +8,11 @@ use entities::Velocity;
 pub trait Delegator {
     /// The object that the delegator controls.
     type Delegate;
+    /// The object controlling the delegate.
+    type Delegator;
 
     /// Actions that will be taken to control the delegate.
-    fn delegate(&mut self, delegate: &mut Self::Delegate);
+    fn delegate(&mut self, delegator: &Self::Delegator, delegate: &mut Self::Delegate);
 }
 
 /// Captures input to control the player entity.
@@ -28,8 +30,9 @@ impl<'pi> PlayerInput<'pi> {
 
 impl<'pi> Delegator for PlayerInput<'pi> {
     type Delegate = Velocity;
+    type Delegator = UserInput;
 
-    fn delegate(&mut self, delegate: &mut Velocity) {
+    fn delegate(&mut self, _delegator: &Self::Delegator, delegate: &mut Self::Delegate) {
         for event in self.events.poll_iter() {
             if let Event::KeyDown { keycode: Some(Keycode::Escape), .. } = event {
                 println!("Escape!");
@@ -45,3 +48,5 @@ impl<'pi> Delegator for PlayerInput<'pi> {
         }
     }
 }
+
+pub struct UserInput;
