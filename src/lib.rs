@@ -5,6 +5,7 @@ use std::time::{Duration, Instant};
 pub mod delegator;
 pub mod entities;
 pub mod graphics;
+pub mod physics;
 pub mod resources;
 pub mod views;
 
