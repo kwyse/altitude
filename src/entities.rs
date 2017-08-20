@@ -40,8 +40,8 @@ where D: Delegator<Delegate = Velocity>,
         self.physics.resolve(&self.velocity, &mut self.position, elapsed);
     }
 
-    pub fn render(&mut self, canvas: &mut Canvas<Window>) {
-        self.renderable.render(canvas, &self.position);
+    pub fn render(&mut self, target: &mut R::Target) {
+        self.renderable.render(target, &self.position);
     }
 }
 
