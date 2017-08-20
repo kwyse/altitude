@@ -55,9 +55,9 @@ pub struct UserInput<'ui> {
 }
 
 impl<'ui> UserInput<'ui> {
-    pub fn new(keyboard_state: KeyboardState<'ui>) -> Self {
+    pub fn new(events: Vec<Event>, keyboard_state: KeyboardState<'ui>) -> Self {
         Self {
-            events: Vec::new(),
+            events: events,
             keyboard: keyboard_state,
         }
     }

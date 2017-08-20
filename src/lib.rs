@@ -31,15 +31,15 @@ pub fn run() {
     let mut previous = Instant::now();
     let mut lag = Duration::new(0, 0);
 
-
     'running: loop {
         let current = Instant::now();
         let elapsed = current - previous;
         previous = current;
         lag += elapsed;
 
+        let events = Vec::new();
         let keyboard = event_pump.keyboard_state();
-        let user_input = UserInput::new(keyboard);
+        let user_input = UserInput::new(events, keyboard);
         player.delegate(&user_input);
 
         while lag > frame_duration {
