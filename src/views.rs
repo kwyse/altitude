@@ -1,4 +1,5 @@
 use sdl2::event::Event;
+use sdl2::keyboard::Keycode;
 use sdl2::render::Canvas;
 use sdl2::video::Window;
 use std::time::Duration;
@@ -42,6 +43,12 @@ impl<'e> View for GameView<'e> {
     type Target = Canvas<Window>;
 
     fn process_input(&mut self, events: &Vec<Event>) -> Action {
+        for event in events.iter() {
+            if let &Event::KeyDown { keycode: Some(Keycode::Escape), .. } = event {
+                return Action::Quit;
+            }
+        }
+
         self.player.delegate(events);
         Action::Continue
     }

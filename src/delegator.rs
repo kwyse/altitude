@@ -44,10 +44,6 @@ impl<'ui> Delegator for PlayerInput {
                         Keycode::S => self.movement.down = true,
                         Keycode::A => self.movement.left = true,
                         Keycode::D => self.movement.right = true,
-                        Keycode::Escape => {
-                            println!("Escape!");
-                            panic!("Please abort me");
-                        }
                         _ => { },
                     }
                 },
