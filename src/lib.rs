@@ -7,7 +7,7 @@ pub mod entities;
 pub mod graphics;
 pub mod resources;
 
-use delegator::{PlayerInput, UserInput};
+use delegator::PlayerInput;
 use entities::{Entity, Size};
 use graphics::Sprite;
 use resources::Resources;
@@ -21,8 +21,8 @@ pub fn run() {
     let texture_creator = &canvas.texture_creator();
     let resources = Resources::new(texture_creator);
 
-    let event_pump = sdl_context.event_pump().unwrap();
-    let mut player_input = PlayerInput::new();
+    let mut event_pump = sdl_context.event_pump().unwrap();
+    let mut player_input = PlayerInput;
     let player_sprite = Sprite::new(&resources.textures.player, Size { width: 32, height: 32 });
 
     let mut player = Entity::new(&mut player_input, player_sprite);
@@ -37,19 +37,8 @@ pub fn run() {
         previous = current;
         lag += elapsed;
 
-        // FIXME: This should get events from `poll_iter()`:
-        //
-        // let events = event_pump.poll_iter();
-        //
-        // This requires `events` to be mutable and that a mutable and
-        // immutable reference are borrowed in this loop. It looks like the way
-        // I'm using lifetimes in `delegator.rs` is causing the references to
-        // be borrowed longer than intended.
-        let events = Vec::new();
-
-        let keyboard = event_pump.keyboard_state();
-        let user_input = UserInput::new(events, keyboard);
-        player.delegate(&user_input);
+        let events = event_pump.poll_iter().collect();
+        player.delegate(&events);
 
         while lag > frame_duration {
             lag -= frame_duration;
