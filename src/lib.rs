@@ -37,7 +37,16 @@ pub fn run() {
         previous = current;
         lag += elapsed;
 
+        // FIXME: This should get events from `poll_iter()`:
+        //
+        // let events = event_pump.poll_iter();
+        //
+        // This requires `events` to be mutable and that a mutable and
+        // immutable reference are borrowed in this loop. It looks like the way
+        // I'm using lifetimes in `delegator.rs` is causing the references to
+        // be borrowed longer than intended.
         let events = Vec::new();
+
         let keyboard = event_pump.keyboard_state();
         let user_input = UserInput::new(events, keyboard);
         player.delegate(&user_input);
