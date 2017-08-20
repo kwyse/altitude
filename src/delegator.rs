@@ -1,6 +1,5 @@
-use sdl2::EventPump;
 use sdl2::event::Event;
-use sdl2::keyboard::{Keycode, Scancode};
+use sdl2::keyboard::Keycode;
 
 use entities::Velocity;
 
@@ -8,40 +7,81 @@ use entities::Velocity;
 pub trait Delegator {
     /// The object that the delegator controls.
     type Delegate;
+    /// The object controlling the delegate.
+    type Delegator;
 
     /// Actions that will be taken to control the delegate.
-    fn delegate(&mut self, delegate: &mut Self::Delegate);
+    fn delegate(&mut self, delegator: &Self::Delegator, delegate: &mut Self::Delegate);
 }
 
 /// Captures input to control the player entity.
-pub struct PlayerInput<'pi> {
-    events: &'pi mut EventPump
+pub struct PlayerInput {
+    movement: MovementKeys,
 }
 
-impl<'pi> PlayerInput<'pi> {
-    pub fn new(events: &'pi mut EventPump) -> Self {
+impl PlayerInput {
+    pub fn new() -> Self {
         Self {
-            events: events,
+            movement: MovementKeys {
+                up: false,
+                down: false,
+                left: false,
+                right: false,
+            },
         }
     }
 }
-
-impl<'pi> Delegator for PlayerInput<'pi> {
+impl<'ui> Delegator for PlayerInput {
     type Delegate = Velocity;
+    type Delegator = Vec<Event>;
 
-    fn delegate(&mut self, delegate: &mut Velocity) {
-        for event in self.events.poll_iter() {
-            if let Event::KeyDown { keycode: Some(Keycode::Escape), .. } = event {
-                println!("Escape!");
-                panic!("Please abort me");
+    fn delegate(&mut self, delegator: &Self::Delegator, delegate: &mut Self::Delegate) {
+        for event in delegator.iter() {
+            match event {
+                &Event::KeyDown { keycode: Some(keycode), .. } => {
+                    match keycode {
+                        Keycode::W => self.movement.up = true,
+                        Keycode::S => self.movement.down = true,
+                        Keycode::A => self.movement.left = true,
+                        Keycode::D => self.movement.right = true,
+                        Keycode::Escape => {
+                            println!("Escape!");
+                            panic!("Please abort me");
+                        }
+                        _ => { },
+                    }
+                },
+                &Event::KeyUp { keycode: Some(keycode), .. } => {
+                    match keycode {
+                        Keycode::W => self.movement.up = false,
+                        Keycode::S => self.movement.down = false,
+                        Keycode::A => self.movement.left = false,
+                        Keycode::D => self.movement.right = false,
+                        _ => { },
+                    }
+                },
+                _ => { },
             }
         }
 
-        let state = self.events.keyboard_state();
-        if state.is_scancode_pressed(Scancode::D) {
-            println!("Going down!");
-            delegate.x = 0.0;
-            delegate.y = 1.0;
-        }
+        let mut vel_y = delegate.y;
+        if self.movement.up { vel_y = -1.0_f64.max(vel_y - 1.0); } else { vel_y = 0.0_f64.max(vel_y); }
+        if self.movement.down { vel_y = 1.0_f64.min(vel_y + 1.0); } else { vel_y = 0.0_f64.min(vel_y); }
+
+        let mut vel_x = delegate.x;
+        if self.movement.left { vel_x = -1.0_f64.max(vel_x - 1.0); } else { vel_x = 0.0_f64.max(vel_x); }
+        if self.movement.right { vel_x = 1.0_f64.min(vel_x + 1.0); } else { vel_x = 0.0_f64.min(vel_x); }
+
+        delegate.x = vel_x;
+        delegate.y = vel_y;
+
+        println!("({}, {})", delegate.x, delegate.y);
     }
+}
+
+struct MovementKeys {
+    up: bool,
+    down: bool,
+    left: bool,
+    right: bool,
 }
