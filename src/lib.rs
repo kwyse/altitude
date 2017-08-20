@@ -22,7 +22,7 @@ pub fn run() {
     let resources = Resources::new(texture_creator);
 
     let mut event_pump = sdl_context.event_pump().unwrap();
-    let mut player_input = PlayerInput;
+    let mut player_input = PlayerInput::new();
     let player_sprite = Sprite::new(&resources.textures.player, Size { width: 32, height: 32 });
 
     let mut player = Entity::new(&mut player_input, player_sprite);
