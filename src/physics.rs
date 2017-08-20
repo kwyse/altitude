@@ -2,16 +2,16 @@ use std::time::Duration;
 
 use entities::{Position, Velocity};
 
-pub trait Physics {
+pub trait Movable {
     type Mutator;
     type Mutable;
 
     fn resolve(&mut self, mutator: &Self::Mutator, mutable: &mut Self::Mutable, elapsed: &Duration);
 }
 
-pub struct PlayerPhysics;
+pub struct Physics;
 
-impl Physics for PlayerPhysics {
+impl Movable for Physics {
     type Mutator = Velocity;
     type Mutable = Position;
 

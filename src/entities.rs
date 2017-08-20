@@ -4,28 +4,28 @@ use std::time::Duration;
 
 use delegator::Delegator;
 use graphics::Renderable;
-use physics::Physics;
+use physics::Movable;
 
 /// A game object.
 ///
 /// Composed of controlling, physics, and rendering components.
-pub struct Entity<D, P, R> {
+pub struct Entity<D, M, R> {
     delegator: Box<D>,
-    physics: Box<P>,
+    movable: Box<M>,
     renderable: Box<R>,
     velocity: Velocity,
     position: Position,
 }
 
-impl<D, P, R> Entity<D, P, R>
+impl<D, M, R> Entity<D, M, R>
 where D: Delegator<Delegate = Velocity>,
-      P: Physics<Mutator = Velocity, Mutable = Position>,
+      M: Movable<Mutator = Velocity, Mutable = Position>,
       R: Renderable<Target = Canvas<Window>>,
 {
-    pub fn new(delegator: D, physics: P, renderable: R) -> Self {
+    pub fn new(delegator: D, movable: M, renderable: R) -> Self {
         Self {
             delegator: Box::new(delegator),
-            physics: Box::new(physics),
+            movable: Box::new(movable),
             renderable: Box::new(renderable),
             velocity: Velocity { x: 0.0, y: 0.0 },
             position: Position { x: 0.0, y: 0.0 },
@@ -37,11 +37,15 @@ where D: Delegator<Delegate = Velocity>,
     }
 
     pub fn update(&mut self, elapsed: &Duration) {
-        self.physics.resolve(&self.velocity, &mut self.position, elapsed);
+        self.movable.resolve(&self.velocity, &mut self.position, elapsed);
     }
 
     pub fn render(&mut self, target: &mut R::Target) {
         self.renderable.render(target, &self.position);
+    }
+
+    pub fn position(&self) -> &Position {
+        &self.position
     }
 }
 

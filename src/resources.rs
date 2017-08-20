@@ -17,12 +17,14 @@ impl<'r> Resources<'r> {
 /// Holds textures held on disk.
 pub struct Textures<'t> {
     pub player: Texture<'t>,
+    pub enemy: Texture<'t>,
 }
 
 impl<'t> Textures<'t> {
     pub fn new<T>(loader: &'t TextureCreator<T>) -> Self {
         Self {
             player: loader.load_texture("assets/textures/player.png").unwrap(),
+            enemy: loader.load_texture("assets/textures/enemy.png").unwrap(),
         }
     }
 }

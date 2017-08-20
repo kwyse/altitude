@@ -1,7 +1,7 @@
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
-use entities::Velocity;
+use entities::{Position, Velocity};
 
 /// Controls an entity, such as through user input or through AI.
 pub trait Delegator {
@@ -80,4 +80,19 @@ struct MovementKeys {
     down: bool,
     left: bool,
     right: bool,
+}
+
+pub struct EnemyHeuristic;
+
+impl Delegator for EnemyHeuristic {
+    type Delegate = Velocity;
+    type Delegator = Position;
+
+    fn delegate(&mut self, delegator: &Self::Delegator, delegate: &mut Self::Delegate) {
+        if delegator.x < delegate.x {
+            delegate.x = -1.0;
+        } else {
+            delegate.x = 1.0;
+        }
+    }
 }
