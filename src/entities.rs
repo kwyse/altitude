@@ -7,20 +7,20 @@ use graphics::Renderable;
 /// A game object.
 ///
 /// Composed of a controlling component and a rendering component.
-pub struct Entity<'e, D: 'e, R: 'e> {
-    delegator: &'e mut D,
+pub struct Entity<D, R> {
+    delegator: Box<D>,
     renderable: Box<R>,
     velocity: Velocity,
     position: Position,
 }
 
-impl<'e, D, R> Entity<'e, D, R>
+impl<D, R> Entity<D, R>
 where D: Delegator<Delegate = Velocity>,
       R: Renderable<Target = Canvas<Window>>,
 {
-    pub fn new(delegator: &'e mut D, renderable: R) -> Self {
+    pub fn new(delegator: D, renderable: R) -> Self {
         Self {
-            delegator: delegator,
+            delegator: Box::new(delegator),
             renderable: Box::new(renderable),
             velocity: Velocity { x: 0.0, y: 0.0 },
             position: Position { x: 0.0, y: 0.0 },
